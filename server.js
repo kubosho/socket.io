@@ -10,7 +10,6 @@ app.use(express.static(__dirname + "/public"));
 var currentUsers = 0;
 
 io.on("connection", function (socket) {
-  // Login
   socket.on("login", function (username) {
     if (socket.user) {
       return;
@@ -34,7 +33,6 @@ io.on("connection", function (socket) {
     joinLobby(socket);
   });
 
-  // Disconnect
   socket.on("disconnect", function () {
     if (socket.user) {
       delete socket.user;
@@ -52,7 +50,20 @@ function uid() {
   return crypto.randomBytes(16).toString("hex");
 }
 
+function rooms() {
+  // TODO
+  return [];
+}
+
 function joinLobby(socket) {
+  socket.join("lobby", function (err) {
+    if (err) {
+      return;
+    }
+
+    socket.roomId = "lobby";
+    socket.emit("join lobby", rooms());
+  });
 }
 
 http.listen(port, function () {
