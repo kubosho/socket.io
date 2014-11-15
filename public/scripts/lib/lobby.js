@@ -15,6 +15,11 @@ function Lobby(selector) {
     socket.emit("add room");
   });
 
+  this.$rooms.on("click", ".room", function () {
+    var roomId = $(this).attr("data-id");
+    socket.emit("join room", roomId);
+  });
+
   socket.on("join lobby", function (rooms) {
     that.$node
       .triggier("fullScreen", false)
@@ -32,8 +37,17 @@ function Lobby(selector) {
     });
 
     socket.on("room update", function (room) {
-      console.log(room);
-      that.$rooms.append(createRoomNode(room));
+      var $room = that.$rooms.find(".room[data-id=" + room.id + "]");
+      if ($room.length) {
+        $room.find(".current-users").text(room.users.length);
+      }
+      else {
+        that.$rooms.append(createRoomNode(room));
+      }
+    });
+
+    socket.on("room removed", function (roomId) {
+      that.$rooms.find(".room[data-id=" + roomId + "]").remove();
     });
   });
 }

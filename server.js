@@ -35,6 +35,8 @@ io.on("connection", function (socket) {
   });
 
   socket.on("disconnect", function () {
+    leave(socket);
+
     if (socket.user) {
       delete socket.user;
       currentUsers--;
@@ -54,6 +56,14 @@ io.on("connection", function (socket) {
 
     roomMap[room.id] = room;
     join(socket, room.id);
+  });
+
+  socket.on("join room", function (roomId) {
+    if (!socket.user) {
+      return;
+    }
+
+    join(socket, roomId);
   });
 });
 
