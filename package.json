@@ -12,8 +12,8 @@
     "three": "^0.66.25"
   },
   "scripts": {
-    "start": "npm run",
-    "build": "browserify public/index.js > public/bundle.js",
+    "start": "npm run build && jade public/index.jade && node server.js",
+    "build": "browserify public/scripts/index.js > public/scripts/bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
