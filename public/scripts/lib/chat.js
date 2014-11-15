@@ -9,6 +9,7 @@ module.exports = Chat;
 function Chat(selector, opts) {
   var that = this;
   this.$node = $(selector);
+  this.$form = this.$node.find("form");
   this.$input = this.$node.find("input.message");
   this.$messages = this.$node.find(".messages");
 

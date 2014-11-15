@@ -16,7 +16,7 @@ io.on("connection", function (socket) {
       return;
     }
 
-    username = usename.trim();
+    username = username.trim();
 
     if (username.length > 16) {
       return;

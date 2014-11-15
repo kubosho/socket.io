@@ -14,8 +14,8 @@ function Login(selector) {
   this.$input = this.$node.find("input.username");
 
   function init() {
-    this.$node.show();
-    this.$input.focus();
+    that.$node.show();
+    that.$input.focus();
   }
 
   this.$node.click(function (event) {

@@ -27,8 +27,8 @@ function Lobby(selector) {
 
   socket.on("join lobby", function (rooms) {
     that.$node
-      .triggier("fullScreen", false)
-      .triggier("header", { title: "Lobby" });
+      .trigger("fullScreen", false)
+      .trigger("header", { title: "Lobby" });
 
     that.$rooms.empty();
     rooms.forEach(function (room) {

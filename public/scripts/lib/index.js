@@ -1,6 +1,7 @@
 var $ = require("jquery");
 var Login = require("./login");
 var Header = require("./header");
+var Lobby = require("./lobby");
 
 $(function () {
   new Login(".page.login");
