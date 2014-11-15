@@ -3,17 +3,20 @@ html(lang="ja")
   head
     meta(content="charset=utf-8")
     title Socket.IO test app
+  
   body
     div.wrapper.full-screen
       header.header
         h1.title
         span.state Online players:
         span.current-users
+ 
       div.pages
         div.page.login
           h1.title What's your nickname?
           form
             input.username(type="text" maxlength="14")
+
         div.page.lobby
           output.messages
           form
@@ -21,8 +24,18 @@ html(lang="ja")
           aside.sidebar
             button.new-room.btn.btn-info(type="button") Create your own game
             ul.rooms
+
         div.page.room
+
     script(type="text/html" id="template-room")
       div.room(data-id="")
         span.roomname
         span.badge.current-users
+
+    script(type="text/html" id="template-message")
+      div.message
+        span.username
+        span.body
+
+    script(type="text/html" id="template-log")
+      div.log

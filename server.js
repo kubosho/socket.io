@@ -58,6 +58,26 @@ io.on("connection", function (socket) {
     join(socket, room.id);
   });
 
+  socket.on("message", function (message) {
+    if (!socket.user) {
+      return;
+    }
+
+    if (!socket.roomId) {
+      return;
+    }
+
+    if (!message) {
+      return;
+    }
+
+    var eventName = "lobby" === socket.roomId ?
+                    "lobby message" :
+                    "message";
+
+    socket.broadcast.to(socket.roomId).emit(eventName, socket.user, message);
+  });
+
   socket.on("join room", function (roomId) {
     if (!socket.user) {
       return;
