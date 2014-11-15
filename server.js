@@ -7,6 +7,7 @@ var crypto = require("crypto");
 
 app.use(express.static(__dirname + "/public"));
 
+var roomMap = {};
 var currentUsers = 0;
 
 io.on("connection", function (socket) {
@@ -40,6 +41,20 @@ io.on("connection", function (socket) {
       emitCurrentUsers(currentUsers);
     }
   });
+
+  socket.on("add room", function () {
+    if (!socket.user) {
+      return;
+    }
+
+    var room = new Room(socket.user);
+    if (roomMap[room.id]) {
+      return;
+    }
+
+    roomMap[room.id] = room;
+    join(socket, room.id);
+  });
 });
 
 function emitCurrentUsers(currentNum) {
@@ -51,8 +66,9 @@ function uid() {
 }
 
 function rooms() {
-  // TODO
-  return [];
+  return Object.keys(roomMap).map(function (roomId) {
+    return roomMap[roomId];
+  });
 }
 
 function joinLobby(socket) {
@@ -65,6 +81,66 @@ function joinLobby(socket) {
     socket.emit("join lobby", rooms());
   });
 }
+
+function join(socket, roomId) {
+  var room = roomMap[roomId];
+  if (!room) {
+    return;
+  }
+
+  leave(socket);
+
+  socket.join(roomId, function (err) {
+    if (err) {
+      return;
+    }
+
+    var room = roomMap[roomId];
+    if (!room) {
+      return;
+    }
+
+    if (!~room.sockets.indexOf(socket)) {
+      room.sockets.push(socket);
+    }
+
+    socket.roomId = roomId;
+    socket.emit("join room", room);
+    socket.broadcast.to("lobby").emit("room updated", room);
+    socket.broadcast.to(roomId).emit("user joined", socket.user);
+  });
+}
+
+function leave(socket) {
+  var roomId = socket.roomId;
+  if (!roomId) {
+    return;
+  }
+
+  socket.leave(roomId);
+  socket.roomId = null;
+
+  if ("lobby" === roomId) {
+    socket.emit("leave lobby");
+    return;
+  }
+}
+
+function Room(user) {
+  this.id = user.id;
+  this.name = user.username + "\'s game";
+  this.sockets = [];
+}
+
+Room.prototype.toJSON = function () {
+  return {
+    id: this.id,
+    name: this.name,
+    users: this.sockets.map(function (socket) {
+      return socket.user;
+    })
+  };
+};
 
 http.listen(port, function () {
   console.log("Server listening on port: " + port);
